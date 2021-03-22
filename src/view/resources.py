@@ -1,11 +1,14 @@
 import pyglet
 
+
 def center_image(image):
     """Sets an image's anchor point to its center"""
     image.anchor_x = image.width / 2
     image.anchor_y = image.height / 2
 
-pyglet.resource.path = ['../resources', '../resources/audio', '../resources/sprites', '../resources/sprites/ships', '../resources/sprites/meteors', '../resources/sprites/enemies']
+
+pyglet.resource.path = ['../resources', '../resources/audio', '../resources/sprites', '../resources/sprites/ships',
+                        '../resources/sprites/meteors', '../resources/sprites/enemies']
 pyglet.resource.reindex()
 
 empty_space = pyglet.resource.image('empty.png')

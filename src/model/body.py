@@ -1,9 +1,5 @@
-import pyglet
-from pyglet.window import key
 
 from model.utils import Vektor2D
-from view import resources
-
 
 class Body:
     def __init__(self, location=(0, 0), velocity=(0, 0), acceleration=(0, 0), direction=(0, 1), mass=0, space=None, *args, **kwargs):
@@ -17,6 +13,8 @@ class Body:
         self._momentum = self.mass * self.velocity
         self._impulse = self.mass * self.acceleration
         self._direction = Vektor2D(*direction).normalized
+
+        self.rotational_velocity = 0
 
     def add_shape(self, shape, *args, **kwargs):
         self.shape = shape(*args, **kwargs)
@@ -99,6 +97,9 @@ class Body:
     def update(self, dt):
         self.velocity += self.acceleration
         self.location += self.velocity
+        self.rotate_degrees(self.rotational_velocity * dt)
+        #self.rotate_degrees(15)
+        print(self.x, self.y)
 
     def collides_with(self, other) -> bool:
         pass

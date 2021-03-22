@@ -1,41 +1,41 @@
-
 from model.body import *
+from view import resources
+from api.communication.events import EventSource
+import pyglet
+from pyglet.window import key
+from pyglet.event import EventDispatcher, EVENT_HANDLED
 
-class Controller:
-    def __init__(self):
-        pass
 
 class Ship(Body):
-    def __init__(self, speed=20, *args, **kwargs):
+    def __init__(self, speed=1, *args, **kwargs):
         super(Ship, self).__init__(*args, **kwargs)
         self.speed = speed
+        self.rot_speed = 180
         self.key_pressed = key.KeyStateHandler()
         self.event_handlers = [self, self.key_pressed]
 
-    def update(self, dt):
-        if self.key_pressed[key.UP] and not self.key_pressed[key.DOWN]:
-            self.acceleration = self.direction * self.speed * dt
-        elif self.key_pressed[key.DOWN] and not self.key_pressed[key.UP]:
-            self.acceleration = self.direction * -self.speed * dt
-        elif (self.key_pressed[key.UP] and self.key_pressed[key.DOWN]) or \
-                (not self.key_pressed[key.UP] and not self.key_pressed[key.DOWN]):
-            self.acceleration = Vektor2D(0, 0)
-
-        if self.key_pressed[key.LEFT] and not self.key_pressed[key.RIGHT]:
-            self.rotate_degrees(180 * dt)
-        elif self.key_pressed[key.RIGHT] and not self.key_pressed[key.LEFT]:
-            self.rotate_degrees(-180 * dt)
-        elif (self.key_pressed[key.LEFT] and self.key_pressed[key.RIGHT]) or \
-                (not self.key_pressed[key.LEFT] and not self.key_pressed[key.RIGHT]):
-            pass
-
-        super(Ship, self).update(dt)
-
     def on_key_press(self, symbol, modifier):
-        pass
+        print('Ship.on_key_press', symbol)
+        if symbol == key.UP:
+            self.acceleration = self.direction * self.speed
+        elif symbol == key.DOWN:
+            self.acceleration = self.direction * -self.speed
+        elif symbol == key.LEFT:
+            self.rotational_velocity = self.rot_speed
+        elif symbol == key.RIGHT:
+            self.rotational_velocity = -self.rot_speed
+        return EVENT_HANDLED
 
-    def on_key_release(self, symbol):
-        pass
+
+
+    def on_key_release(self, symbol, modifier):
+        print('Ship.on_key_release', symbol)
+        if symbol == key.UP or symbol == key.DOWN:
+            self.acceleration = (0, 0)
+        elif symbol == key.LEFT or symbol == key.RIGHT:
+            self.rotational_velocity = 0
+        return EVENT_HANDLED
+
 
 class Bullet(Body):
     pass

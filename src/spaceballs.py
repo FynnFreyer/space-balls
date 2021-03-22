@@ -7,10 +7,14 @@ from controller import Ship
 
 window = pyglet.window.Window(800, 600, "Tester", resizable=False)
 
-window.push_handlers
 
 space = Space()
-ship = space.add_body(kind=Ship, location=(300, 300))
+ship = space.add_body(kind=Ship, location=(300, 300))  # type: Ship
+
+window.event(ship.on_key_press)
+window.event(ship.on_key_release)
+
+window.push_handlers(ship.event_handlers)
 view = View(space=space, window=window)
 
 
