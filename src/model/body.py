@@ -6,8 +6,7 @@ from view import resources
 
 
 class Body:
-    def __init__(self, location=(0, 0), velocity=(0, 0), acceleration=(0, 0), direction=(0, 1), mass=0, space=None, img=resources.img_ship_B, *args, **kwargs):
-        #super(Body, self).__init__(img=img, *args, **kwargs)
+    def __init__(self, location=(0, 0), velocity=(0, 0), acceleration=(0, 0), direction=(0, 1), mass=0, space=None, *args, **kwargs):
         self.space = space
 
         self.mass = mass
@@ -18,9 +17,6 @@ class Body:
         self._momentum = self.mass * self.velocity
         self._impulse = self.mass * self.acceleration
         self._direction = Vektor2D(*direction).normalized
-
-
-
 
     def add_shape(self, shape, *args, **kwargs):
         self.shape = shape(*args, **kwargs)
@@ -118,47 +114,5 @@ class Body:
         if (x, y) != (-1, -1) and strategy is not None:
             strategy(x, y)
 
-class Star(Body):
-    def __init__(self, *args, **kwargs):
-        kwargs['mass'] = 10000
-        super(Star, self).__init__(*args, **kwargs)
 
 
-class Ship(Body):
-    def __init__(self, speed=20, *args, **kwargs):
-        kwargs['img'] = resources.img_ship_C
-        super(Ship, self).__init__(*args, **kwargs)
-
-        self.speed = speed
-
-        self.key_pressed = key.KeyStateHandler()
-        self.space.window.push_handlers(self.key_pressed)
-
-    def update(self, dt):
-        if self.key_pressed[key.UP] and not self.key_pressed[key.DOWN]:
-            self.acceleration = self.direction * self.speed * dt
-        elif self.key_pressed[key.DOWN] and not self.key_pressed[key.UP]:
-            self.acceleration = self.direction * -self.speed * dt
-        elif (self.key_pressed[key.UP] and self.key_pressed[key.DOWN]) or \
-                (not self.key_pressed[key.UP] and not self.key_pressed[key.DOWN]):
-            self.acceleration = Vektor2D(0, 0)
-
-        if self.key_pressed[key.LEFT] and not self.key_pressed[key.RIGHT]:
-            self.rotate_degrees(180 * dt)
-        elif self.key_pressed[key.RIGHT] and not self.key_pressed[key.LEFT]:
-            self.rotate_degrees(-180 * dt)
-        elif (self.key_pressed[key.LEFT] and self.key_pressed[key.RIGHT]) or \
-                (not self.key_pressed[key.LEFT] and not self.key_pressed[key.RIGHT]):
-            pass
-
-        print('Direction:', self.direction)
-        print('Degrees:', self.direction.rotation_degrees)
-
-
-        super(Ship, self).update(dt)
-
-    def on_key_press(self, symbol, modifier):
-        print('Ship.on_key_press')
-
-    def on_key_release(self, symbol, modifier):
-        pass

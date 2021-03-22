@@ -3,13 +3,16 @@ import pyglet
 from model.space import Space
 from model.body import *
 from view.view import View
+from controller import Ship
 
 window = pyglet.window.Window(800, 600, "Tester", resizable=False)
 
-space = Space(window=window)
-ship = space.add_body(kind=Ship, location=(300, 300))
+window.push_handlers
 
-view = View(space)
+space = Space()
+ship = space.add_body(kind=Ship, location=(300, 300))
+view = View(space=space, window=window)
+
 
 @window.event
 def on_draw():

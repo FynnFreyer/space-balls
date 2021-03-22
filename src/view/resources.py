@@ -11,11 +11,11 @@ pyglet.resource.reindex()
 empty_space = pyglet.resource.image('empty.png')
 center_image(empty_space)
 
-img_ship_A = pyglet.resource.image('ship_A.png')
-center_image(img_ship_A)
+ship_A = pyglet.resource.image('ship_A.png')
+center_image(ship_A)
 
-img_ship_B = pyglet.resource.image('ship_B.png')
-center_image(img_ship_B)
+ship_B = pyglet.resource.image('ship_B.png')
+center_image(ship_B)
 
-img_ship_C = pyglet.resource.image('ship_C.png')
-center_image(img_ship_C)
+ship_C = pyglet.resource.image('ship_C.png')
+center_image(ship_C)

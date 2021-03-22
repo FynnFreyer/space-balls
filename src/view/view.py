@@ -4,6 +4,8 @@ from model.space import Space
 from model.body import *
 
 from view.resources import *
+from view.skins import *
+
 
 class View:
     """
@@ -12,30 +14,50 @@ class View:
     It translates the space coordinates into screen coordinates.
     """
 
-    def __init__(self, space: Space, focus: Body=None, batch: pyglet.graphics.Batch=None):
+    def __init__(self, space: Space, focus: Body = None, batch: pyglet.graphics.Batch = None,
+                 window: pyglet.window.Window = None):
         self.space = space
         self.focus = focus
-        self.batch = batch
+        self.window = window
+
+        if batch is None:
+            self.batch = pyglet.graphics.Batch()
+        else:
+            self.batch = batch
+
+        self.sprite_map = {}  # type: Dict[Body, pyglet.sprite.Sprite]
+        self._init_sprite_map()
+        self._pull()
 
     def draw(self):
+        self._pull()
+        self.batch.draw()
+        return
         if self.focus is None:
-            self.space.draw()
+            self.batch.draw()
         else:
+            del self.batch
+            self.batch = pyglet.graphics.Batch()
             sprites = list()
             for body in self.space.bodies:
-                sprite = pyglet.sprite.Sprite(img=body.img)
-
-
+                skin = Skin.get_skin(body)
+                sprite = pyglet.sprite.Sprite(img=skin.img)
 
             raise NotImplementedError
 
-def get_img(body: Body):
-    if type(body) == Body:
-        return
-    if type(body) == Ship:
-        return img_ship_B
+    def _pull(self):
+        for body, sprite in self.sprite_map.items():
+            sprite.x, sprite.y = body.location
+            sprite.rotation = body.sprite_rotation
 
-class Ship_View(pyglet.sprite.Sprite):
-    def __init__(self, *args, **kwargs):
+    def _init_sprite_map(self):
+        for body in self.space.bodies:
+            skin = Skin.get_skin(body)
+            x, y = body.location
+            sprite = pyglet.sprite.Sprite(img=skin.img, x=x, y=y, batch=self.batch)
+            sprite.rotation = body.sprite_rotation
+            self.sprite_map[body] = sprite
 
-        super(Ship_View, self).__init__(*args, **kwargs)
+
+class GameWindow(pyglet.window.Window):
+    pass
