@@ -1,7 +1,5 @@
 from model.body import *
-from view import resources
-from api.communication.events import EventSource
-import pyglet
+
 from pyglet.window import key
 from pyglet.event import EventDispatcher, EVENT_HANDLED
 
@@ -24,6 +22,9 @@ class Ship(Body):
             self.rotational_velocity = self.rot_speed
         elif symbol == key.RIGHT:
             self.rotational_velocity = -self.rot_speed
+        elif symbol == key.SPACE:
+            self.rotational_velocity = 0
+
         return EVENT_HANDLED
 
 

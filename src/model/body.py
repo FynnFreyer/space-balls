@@ -1,9 +1,12 @@
-
 from model.utils import Vektor2D
+
 
 class Body:
     def __init__(self, location=(0, 0), velocity=(0, 0), acceleration=(0, 0), direction=(0, 1), mass=0, space=None, *args, **kwargs):
-        self.space = space
+        if space is None:
+            raise TypeError('Needs a space')
+        else:
+            self.space = space
 
         self.mass = mass
 
@@ -16,8 +19,13 @@ class Body:
 
         self.rotational_velocity = 0
 
-    def add_shape(self, shape, *args, **kwargs):
-        self.shape = shape(*args, **kwargs)
+    def update(self, dt):
+        self.velocity += self.acceleration
+        self.velocity -= (self.velocity)
+        self.location += self.velocity
+        self.rotate_degrees(self.rotational_velocity * dt)
+        #self.rotate_degrees(15)
+        print(self.x, self.y)
 
     @property
     def location(self):
@@ -93,13 +101,6 @@ class Body:
 
     def rotate_degrees(self, rotation):
         self.direction = self.direction.rotate_degrees(rotation)
-
-    def update(self, dt):
-        self.velocity += self.acceleration
-        self.location += self.velocity
-        self.rotate_degrees(self.rotational_velocity * dt)
-        #self.rotate_degrees(15)
-        print(self.x, self.y)
 
     def collides_with(self, other) -> bool:
         pass

@@ -8,7 +8,7 @@ from controller import Ship
 window = pyglet.window.Window(800, 600, "Tester", resizable=False)
 
 
-space = Space()
+space = Space(drag=1)
 ship = space.add_body(kind=Ship, location=(300, 300))  # type: Ship
 
 window.event(ship.on_key_press)
