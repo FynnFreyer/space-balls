@@ -21,7 +21,6 @@ class Body:
 
     def update(self, dt):
         self.velocity += self.acceleration
-        self.velocity -= (self.velocity)
         self.location += self.velocity
         self.rotate_degrees(self.rotational_velocity * dt)
         #self.rotate_degrees(15)

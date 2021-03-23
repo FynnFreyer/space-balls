@@ -28,8 +28,9 @@ class Vektor2D(namedtuple('Vektor2D', ['x', 'y'])):
         except TypeError:
             return Vektor2D(self.x * other, self.y * other)
 
-    def __le__(self, other):
-        return compare(self, other)
+    def __eq__(self, other):
+        ox, oy = other
+        return compare(self.x, ox) and compare(self.y, oy)
 
     def __truediv__(self, other):
         ox, oy = other
@@ -88,17 +89,23 @@ class Vektor2D(namedtuple('Vektor2D', ['x', 'y'])):
 
 
 class Shape:
-    def is_contained(self, point) -> bool:
+    def contains_point(self, point) -> bool:
+        raise NotImplementedError
+
+    def collides_with_line(self, line):
         raise NotImplementedError
 
 
 class Line(Shape):
     def __init__(self, support: Vektor2D, direction: Vektor2D):
-        self.support = support
-        self.direction = direction
+        self.support = Vektor2D(*support)
+        self.direction = Vektor2D(*direction)
 
-        x1, y1 = support
-        x2, y2 = direction
+        self.start = self.support
+        self.end = self.support + self.direction
+
+        x1, y1 = self.start
+        x2, y2 = self.end
         dx, dy = x2 - x1, y2 - y1
         m = dy / dx
         b = y2 - m * x2
@@ -106,9 +113,17 @@ class Line(Shape):
         self.m = m
         self.b = b
 
-    def is_contained(self, point) -> bool:
+    @classmethod
+    def from_start_end(cls, start, end):
+        e = Vektor2D(*end)
+        return cls(start, e.distance_vector(start))
+
+    def contains_point(self, point) -> bool:
         x, y = point
         return round(y, 8) == round(self.m * x + self.b, 8)
+
+    def collides_with_line(self, line):
+        return not compare(self.m, line.m) or compare(self.b, line.b)
 
 
 class Circle(Shape):
@@ -116,11 +131,24 @@ class Circle(Shape):
         self.radius = radius
         self.center = center
 
-    def is_contained(self, point) -> bool:
+    def contains_point(self, point) -> bool:
         return self.center.distance_squared(point) <= self.radius ** 2
 
+    def collides_with_line(self, line):
+        if self.contains_point(line.start) or self.contains_point(line.end):
+            return True
 
-class Box:
+        center_to_start = self.center - line.start
+        t = (center_to_start * line.direction) / (line.direction * line.direction)
+
+        if t < 0 or 1 < t:
+            return False
+
+        closest_point_to_center = line.start + (line.direction * t)
+        return self.contains_point(closest_point_to_center)
+
+
+class Box(Shape):
     def __init__(self, center: Vektor2D, size: Vektor2D, rotation: float = 0):
         self.center = center
         self.size = size
@@ -130,11 +158,14 @@ class Box:
         self.min_y, self.max_y = y - dy, y + dy
         self.rotation = rotation
 
-    def is_contained(self, point) -> bool:
+    def contains_point(self, point) -> bool:
         local_point = Vektor2D(*point)
         x, y = local_point.rotate_around_degrees(self.rotation, other=self.center)
         return (self.min_x <= x and x <= self.max_x) and \
                (self.min_y <= y and y <= self.max_y)
+
+    def collides_with_line(self, line):
+        raise NotImplementedError
 
 
 if __name__ == '__main__':
