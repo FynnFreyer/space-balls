@@ -2,7 +2,7 @@ from model.utils import Vektor2D
 
 
 class Body:
-    def __init__(self, location=(0, 0), velocity=(0, 0), acceleration=(0, 0), direction=(0, 1), mass=0, space=None, *args, **kwargs):
+    def __init__(self, space=None, location=(0, 0), velocity=(0, 0), acceleration=(0, 0), direction=(0, 1), mass=0, *args, **kwargs):
         if space is None:
             raise TypeError('Needs a space')
         else:

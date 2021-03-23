@@ -1,4 +1,5 @@
 import pyglet
+import geometer
 
 from api.communication.events import EventSource
 from api.communication.events import EventHandler

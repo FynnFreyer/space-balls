@@ -1,11 +1,10 @@
 import pyglet
 
 from model.space import Space
-from model.body import *
 from view.view import View
 from controller import Ship
 
-window = pyglet.window.Window(800, 600, "Tester", resizable=False)
+window = pyglet.window.Window(1920, 1080, "Tester", resizable=False)
 
 
 space = Space(drag=1)
