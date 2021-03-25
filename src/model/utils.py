@@ -1,7 +1,6 @@
 import sys
 import numpy as np
 
-from math import sqrt, sin, cos, acos, atan2, degrees, radians
 from collections import namedtuple
 from abc import ABC, abstractmethod
 
@@ -13,7 +12,7 @@ def compare(x, y, epsilon=sys.float_info.min):
 class Vector(namedtuple('Vector', ['x', 'y'])):
 
     def __abs__(self):
-        return sqrt(self.x ** 2 + self.y ** 2)
+        return np.sqrt(self.x ** 2 + self.y ** 2)
 
     def __add__(self, other):
         ox, oy = other
@@ -112,6 +111,7 @@ class Line:
 
     def collides_with_line(self, line) -> bool:
         return not compare(self.m, line.m) or compare(self.b, line.b)
+
 
 class Ray(Line):
     def __init__(self):

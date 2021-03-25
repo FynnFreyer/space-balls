@@ -123,12 +123,14 @@ class Body:
         return self.contains_point(closest_point_to_center)
 
     def collides_with(self, other) -> bool:
-        if not self.position.distance(other.position) <= self.radius + other.radius:
-            return False
-        else:
-            direction = self.position.distance_vector(other.position)
+        direction = self.position.distance_vector(other.position)
+        distance = abs(direction)
+        if distance <= self.radius + other.radius:
             point_of_collision = self.position + (direction / 2)
-            return True
+            self.position -= direction.normalized * (distance - (self.radius + other.radius))
+            return point_of_collision
+        else:
+            return False
 
 
     def _set(self, field, other, *args, **kwargs):

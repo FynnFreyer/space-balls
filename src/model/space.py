@@ -5,7 +5,7 @@ from itertools import combinations
 from model.body import Body
 
 
-class Space(EventListener, EventHandler, EventSource):
+class Space:
     def __init__(self, dimensions: Tuple[int, int] = (-1, -1), drag: float = 0, gravity: float = 0):
         super(Space, self).__init__()
 
@@ -51,6 +51,3 @@ class Space(EventListener, EventHandler, EventSource):
 
         body_a.velocity = v1_new
         body_b.velocity = v2_new
-
-    def on_event(self, event):
-        self.hand_off(event)
