@@ -1,80 +1,135 @@
-from model.utils import Vektor2D
+import numpy as np
+
+from typing import List, Tuple, Mapping, Any
+from model.utils import Vector
 
 
 class Body:
-    def __init__(self, space=None, location=(0, 0), velocity=(0, 0), acceleration=(0, 0), direction=(0, 1), mass=0, *args, **kwargs):
+    def update(self, dt):
+        self.position += self.velocity * dt
+
+    def __init__(self, space=None, shape=None,
+                 position=(0, 0), velocity=(0, 0), mass=1, radius=32, rotation=0, rotational_velocity=0,
+                 *args, **kwargs):
         if space is None:
             raise TypeError('Needs a space')
         else:
             self.space = space
 
-        self.mass = mass
+        self.radius = radius
 
-        self._location = Vektor2D(*location)
-        self._velocity = Vektor2D(*velocity)
-        self._acceleration = Vektor2D(*acceleration)
-        self._momentum = self.mass * self.velocity
-        self._impulse = self.mass * self.acceleration
-        self._direction = Vektor2D(*direction).normalized
+        x, y = position
+        self.x, self.y = x, y
+        self._position = Vector(x, y)
 
-        self.rotational_velocity = 0
+        vx, vy = velocity
+        self.vx, self.vy = x, y
+        self._velocity = Vector(vx, vy)
 
-    def update(self, dt):
-        self.velocity += self.acceleration
-        self.location += self.velocity
-        self.rotate_degrees(self.rotational_velocity * dt)
-        #self.rotate_degrees(15)
-        print(self.x, self.y)
+        self._mass = mass
+        self._momentum = self.velocity * self.mass
+
+        self._rotation = rotation
+        self._rotational_velocity = rotational_velocity
 
     @property
-    def location(self):
-        return self._location
+    def position(self):
+        return self._position
 
-    @location.setter
-    def location(self, other, *args, **kwargs):
-        x, y = self._set('_location', other, *args, **kwargs)
-        self.x = x
-        self.y = y
+    @position.setter
+    def position(self, position: Vector):
+        self.x, self.y = self._set('_position', position)
 
     @property
     def velocity(self):
         return self._velocity
 
     @velocity.setter
-    def velocity(self, other, *args, **kwargs):
-        self._set('_velocity', other, *args, **kwargs)
+    def velocity(self, velocity: Vector):
+        self.vx, self.vy = self._set('_velocity', velocity)
+        self._momentum = self.velocity * self.mass
 
     @property
-    def acceleration(self):
-        return self._acceleration
+    def mass(self):
+        return self._mass
 
-    @acceleration.setter
-    def acceleration(self, other, *args, **kwargs):
-        self._set('_acceleration', other, *args, **kwargs)
+    @mass.setter
+    def mass(self, mass: float):
+        self._mass = mass
+        self._momentum = self.velocity * self.mass
 
     @property
     def momentum(self):
         return self._momentum
 
-    @momentum.setter
-    def momentum(self, other, *args, **kwargs):
-        self._set('_momentum', other, *args, **kwargs)
+    @property
+    def rotation(self):
+        return self._rotation
 
     @property
-    def impulse(self):
-        return self._impulse
-
-    @impulse.setter
-    def impulse(self, other, *args, **kwargs):
-        self._set('_impulse', other, *args, **kwargs)
+    def rotation_degrees(self):
+        return np.rad2deg(self.rotation)
 
     @property
-    def direction(self):
-        return self._direction
+    def sprite_rotation(self):
+        return -self.rotation_degrees + 90
 
-    @direction.setter
-    def direction(self, other, *args, **kwargs):
-        direction = self._set('_direction', other, *args, **kwargs)
+    def rotate(self, rotation):
+        self.direction = self.direction.rotate(rotation)
+
+    def rotate_degrees(self, rotation):
+        self.direction = self.direction.rotate_degrees(rotation)
+
+    def wrap(self, max_x, max_y):
+        self.x %= max_x
+        self.y %= max_y
+
+    def bounce(self, max_x, max_y):
+        x, y = self.position
+        vx, vy = self.velocity
+        if x < 0:
+            x = 0
+            vx = -vx
+        if x > max_x:
+            x = max_x
+            vx = -vx
+        if y < 0:
+            y = 0
+            vy = -vy
+        if y > max_y:
+            y = max_y
+            vy = -vy
+        self.position = (x, y)
+        self.velocity = (vx, vy)
+
+    def checkbounds(self, x, y, strategy=wrap):
+        if (x, y) != (-1, -1) and strategy is not None:
+            strategy(x, y)
+
+    def contains_point(self, point) -> bool:
+        return self.position.distance_squared(point) <= self.radius ** 2
+
+    def collides_with_line(self, line) -> bool:
+        if self.contains_point(line.start) or self.contains_point(line.end):
+            return True
+
+        center_to_start = self.position - line.start
+        t = (center_to_start * line.direction) / (line.direction * line.direction)
+
+        if t < 0 or 1 < t:
+            return False
+
+        closest_point_to_center = line.start + (line.direction * t)
+        return self.contains_point(closest_point_to_center)
+
+    def collides_with(self, other) -> bool:
+        if not self.position.distance(other.position) <= self.radius + other.radius:
+            return False
+        else:
+            direction = self.position.distance_vector(other.position)
+            point_of_collision = self.position + (direction / 2)
+            return True
+
 
     def _set(self, field, other, *args, **kwargs):
         try:
@@ -86,34 +141,7 @@ class Body:
         except IndexError:
             raise
 
-        value = Vektor2D(x, y)
+        value = Vector(x, y)
         setattr(self, field, value)
         return value
-
-    @property
-    def sprite_rotation(self):
-        return -self.direction.rotation_degrees + 90
-
-
-    def rotate(self, rotation):
-        self.direction = self.direction.rotate(rotation)
-
-    def rotate_degrees(self, rotation):
-        self.direction = self.direction.rotate_degrees(rotation)
-
-    def collides_with(self, other) -> bool:
-        pass
-
-    def wrap(self, max_x, max_y):
-        self.x %= max_x
-        self.y %= max_y
-
-    def bounce(self, x, y):
-        pass
-
-    def checkbounds(self, x, y, strategy=wrap):
-        if (x, y) != (-1, -1) and strategy is not None:
-            strategy(x, y)
-
-
 

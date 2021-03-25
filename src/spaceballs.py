@@ -4,11 +4,13 @@ from model.space import Space
 from view.view import View
 from controller import Ship
 
-window = pyglet.window.Window(1920, 1080, "Tester", resizable=False)
+display = pyglet.canvas.get_display()
+screens = display.get_screens()
+window = pyglet.window.Window(1920, 1080, "Tester", resizable=False, screen=screens[-1], fullscreen=True)
 
-
-space = Space(drag=1)
-ship = space.add_body(kind=Ship, location=(300, 300))  # type: Ship
+space = Space()
+ship = space.add_body(kind=Ship, position=(300, 300), velocity=(0, 100))  # type: Ship
+ship2 = space.add_body(kind=Ship, position=(300, 600), velocity=(0, -100))  # type: Ship
 
 window.event(ship.on_key_press)
 window.event(ship.on_key_release)
@@ -22,9 +24,10 @@ def on_draw():
     window.clear()
     view.draw()
 
+
 if __name__ == "__main__":
     # Update the game 120 times per second
-    pyglet.clock.schedule_interval(space.update, 1/120)
+    pyglet.clock.schedule_interval(space.update, 1 / 120)
 
     # Tell pyglet to do its thing
     pyglet.app.run()

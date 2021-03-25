@@ -47,13 +47,13 @@ class View:
 
     def _pull(self):
         for body, sprite in self.sprite_map.items():
-            sprite.x, sprite.y = body.location
+            sprite.x, sprite.y = body.position
             sprite.rotation = body.sprite_rotation
 
     def _init_sprite_map(self):
         for body in self.space.bodies:
             skin = Skin.get_skin(body)
-            x, y = body.location
+            x, y = body.position
             sprite = pyglet.sprite.Sprite(img=skin.img, x=x, y=y, batch=self.batch)
             sprite.rotation = body.sprite_rotation
             self.sprite_map[body] = sprite

@@ -1,40 +1,45 @@
-from typing import Iterable
+from typing import List, Mapping, Type
 from queue import Queue
+from abc import ABC, abstractmethod
 
 
-class Observer:
-    def notify(self):
-        raise NotImplementedError
+class Event(ABC):
+    source: object
 
 
-class Observable:
-    def __init__(self):
-        self.subscribers = Queue()
-
-    def send_notifications(self):
-        for subscriber in self.subscribers:
-            subscriber.notify()
-
-    def subscribe(self, observer):
-        return self.subscribers.put(observer)
-
-    def unsubscribe(self, observer):
-        return self.subscribers.get(observer)
-
-
-class EventListener(Observer):
+class EventListener(ABC):
+    @abstractmethod
     def on_event(self, event):
-        raise NotImplementedError
+        raise NotImplementedError()
 
-class EventHandler:
+
+class EventHandler(ABC):
+    event_type: Type[Event]
+
     def __init__(self):
-        self.subscribers = Queue()  # type: It[EventListener]
+        self.listeners = list()  # type: List[EventListener]
 
     def handle(self, event):
-        for subscriber in self.subscribers:
-            subscriber.on_event(event)
+        if type(event) == self.event_type:
+            for listener in self.listeners:
+                listener.on_event(event)
+
+    def subscribe(self, listener):
+        self.listeners.append(listener)
 
 
-class EventSource(Observable):
-    pass
+class EventSource(ABC):
+    handlers: List[EventHandler]
 
+    def __init__(self):
+        self.handlers = list()  # type: List[EventHandler]
+
+    def hand_off(self, event):
+        for handler in self.handlers:
+            handler.handle(event)
+
+    def subscribe(self, handler):
+        return self.handlers.append(handler)
+
+    def unsubscribe(self, handler):
+        return self.handlers.remove(handler)

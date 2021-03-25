@@ -4,6 +4,7 @@ from view.resources import *
 from model.body import *
 from controller import *
 
+
 class Skin:
     def __init__(self, img=empty_space, scale=1, *args, **kwargs):
         self.img = img
@@ -38,4 +39,3 @@ class MeteorSkinA(Skin):
 class BulletSkinA(Skin):
     def __init__(self):
         self.img = ship_C
-

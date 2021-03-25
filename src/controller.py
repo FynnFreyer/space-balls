@@ -11,43 +11,27 @@ class Ship(Body):
         self.rot_speed = 180
         self.key_pressed = key.KeyStateHandler()
         self.event_handlers = [self, self.key_pressed]
+        self.acceleration_factor = 0
 
     def update(self, dt):
         super().update(dt)
-        pass
 
     def on_key_press(self, symbol, modifier):
-        print('Ship.on_key_press', symbol)
-        if symbol == key.UP:
-            self.accelerating = True
-            self.acceleration = self.direction * self.speed
-        elif symbol == key.DOWN:
-            self.acceleration = self.direction * -self.speed
-        elif symbol == key.LEFT:
-            self.rotational_velocity = self.rot_speed
-        elif symbol == key.RIGHT:
-            self.rotational_velocity = -self.rot_speed
-        elif symbol == key.SPACE:
-            self.rotational_velocity = 0
-
+        pass
 
     def on_key_release(self, symbol, modifier):
-        print('Ship.on_key_release', symbol)
-        if symbol == key.UP or symbol == key.DOWN:
-            self.accelerating = False
-            self.acceleration = (0, 0)
-        elif symbol == key.LEFT or symbol == key.RIGHT:
-            self.rotational_velocity = 0
+        pass
 
 
 class Bullet(Body):
     pass
 
+
 class Meteor(Body):
     pass
+
 
 class Star(Body):
     def __init__(self, *args, **kwargs):
         kwargs['mass'] = 10000
         super(Star, self).__init__(*args, **kwargs)
-
