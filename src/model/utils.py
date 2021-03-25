@@ -113,3 +113,6 @@ class Line:
     def collides_with_line(self, line) -> bool:
         return not compare(self.m, line.m) or compare(self.b, line.b)
 
+class Ray(Line):
+    def __init__(self):
+        pass
