@@ -9,13 +9,14 @@ screens = display.get_screens()
 window = pyglet.window.Window(1920, 1080, "Tester", resizable=False, screen=screens[-1], fullscreen=True)
 
 space = Space()
-ship = space.add_body(kind=Ship, position=(500, 500), velocity=(200, 0))  # type: Ship
-ship2 = space.add_body(kind=Ship, position=(800, 532), velocity=(100, 0))  # type: Ship
+ship_1 = space.add_body(kind=Ship, position=(500, 500), velocity=(200, 0))  # type: Ship
+ship_2 = space.add_body(kind=Ship, position=(800, 532), velocity=(100, 0))  # type: Ship
+ship_3 = space.add_body(kind=Ship, position=(1300, 700, ), velocity=(-500, -200))  # type: Ship
 
-window.event(ship.on_key_press)
-window.event(ship.on_key_release)
+window.event(ship_1.on_key_press)
+window.event(ship_1.on_key_release)
 
-window.push_handlers(ship.event_handlers)
+window.push_handlers(ship_1.event_handlers)
 view = View(space=space, window=window)
 
 

@@ -82,6 +82,9 @@ class Vector(namedtuple('Vector', ['x', 'y'])):
 
 
 class Line:
+    support: Vector
+    direction: Vector
+
     def __init__(self, support: Vector, direction: Vector):
         self.support = Vector(*support)
         self.direction = Vector(*direction)

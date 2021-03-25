@@ -1,7 +1,6 @@
 import pyglet
 
 from view.resources import *
-from model.body import *
 from controller import *
 
 
@@ -28,7 +27,12 @@ class Skin:
 
 class ShipSkinA(Skin):
     def __init__(self):
-        self.img = ship_A
+        self.img = circle
+
+
+class ShipSkinB(Skin):
+    def __init__(self):
+        self.img = ship_B
 
 
 class MeteorSkinA(Skin):
