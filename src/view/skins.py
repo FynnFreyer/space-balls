@@ -5,41 +5,48 @@ from controller import *
 
 
 class Skin:
-    def __init__(self, img=empty_space, scale=1, *args, **kwargs):
+    def __init__(self, img=empty_space, scale=1):
         self.img = img
-        self.img = img.scale
+        self.scale = scale
 
     def to_sprite(self, *args, **kwargs):
         kwargs['img'] = self.img
         return pyglet.sprite.Sprite(*args, **kwargs)
 
     @classmethod
-    def get_skin(cls, body, *args, **kwargs):
+    def get_skin(cls, body):
         if type(body) == Body:
-            return Skin(*args, **kwargs)
-        elif type(body) == Ship:
-            return ShipSkinA()
+            return cls.DefaultSkin()
+        elif type(body) == Player:
+            return cls.ShipSkinA()
         elif type(body) == Meteor:
-            return MeteorSkinA()
+            return cls.MeteorSkinA()
         elif type(body) == Bullet:
-            return BulletSkinA()
+            return cls.BulletSkinA()
+        elif type(body) == Star:
+            return cls.StarSkin()
 
+    class DefaultSkin:
+        def __init__(self):
+            self.img = white_circle
 
-class ShipSkinA(Skin):
-    def __init__(self):
-        self.img = circle
+    class ShipSkinA:
+        def __init__(self):
+            self.img = red_circle_indexed
 
+    class ShipSkinB:
+        def __init__(self):
+            self.img = ship_B
 
-class ShipSkinB(Skin):
-    def __init__(self):
-        self.img = ship_B
+    class MeteorSkinA:
+        def __init__(self):
+            self.img = ship_B
 
+    class BulletSkinA:
+        def __init__(self):
+            self.img = ship_C
 
-class MeteorSkinA(Skin):
-    def __init__(self):
-        self.img = ship_B
+    class StarSkin:
+        def __init__(self):
+            self.img = red_circle
 
-
-class BulletSkinA(Skin):
-    def __init__(self):
-        self.img = ship_C

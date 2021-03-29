@@ -14,7 +14,14 @@ pyglet.resource.reindex()
 empty_space = pyglet.resource.image('empty.png')
 center_image(empty_space)
 
-circle = pyglet.resource.image('circle.png')
+white_circle = pyglet.resource.image('white_circle.png')
+center_image(white_circle)
+
+red_circle = pyglet.resource.image('red_circle.png')
+center_image(red_circle)
+
+red_circle_indexed = pyglet.resource.image('ship_B.png')
+center_image(red_circle_indexed)
 
 ship_A = pyglet.resource.image('ship_A.png')
 center_image(ship_A)

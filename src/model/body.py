@@ -1,4 +1,5 @@
 import numpy as np
+from numpy import pi
 
 from typing import List, Tuple, Mapping, Any
 from model.utils import Vector
@@ -6,17 +7,24 @@ from model.utils import Vector
 
 class Body:
     def update(self, dt):
+        while self.pulses:
+            force: Vector = self.pulses.pop()
+            self.velocity += force * dt
         self.position += self.velocity * dt
+        self.rotation += self.rotational_velocity * dt
 
-    def __init__(self, space=None, shape=None,
-                 position=(0, 0), velocity=(0, 0), mass=1, radius=32, rotation=0, rotational_velocity=0,
+    def __init__(self, space=None, position=(0, 0), velocity=(0, 0),
+                 mass=pi*(32**2), radius=32, rotation=0, rotational_velocity=0,
                  *args, **kwargs):
         if space is None:
             raise TypeError('Needs a space')
         else:
-            self.space = space
+            self.space = space  # type: Space
+            self.event_handlers = list()
 
         self.radius = radius
+
+        self.pulses = list()  # type: List[Vector]
 
         x, y = position
         self.x, self.y = x, y
@@ -50,6 +58,16 @@ class Body:
         self._momentum = self.velocity * self.mass
 
     @property
+    def momentum(self):
+        return self._momentum
+
+    @momentum.setter
+    def momentum(self, momentum: Vector):
+        self._momentum = momentum
+        self._velocity = self.momentum / self.mass
+
+
+    @property
     def mass(self):
         return self._mass
 
@@ -59,12 +77,20 @@ class Body:
         self._momentum = self.velocity * self.mass
 
     @property
-    def momentum(self):
-        return self._momentum
-
-    @property
     def rotation(self):
         return self._rotation
+
+    @rotation.setter
+    def rotation(self, value):
+        self._rotation = value
+
+    @property
+    def rotational_velocity(self):
+        return self._rotational_velocity
+
+    @rotational_velocity.setter
+    def rotational_velocity(self, value):
+        self._rotational_velocity = value
 
     @property
     def rotation_degrees(self):
@@ -123,15 +149,15 @@ class Body:
         return self.contains_point(closest_point_to_center)
 
     def collides_with(self, other) -> bool:
-        direction = self.position.distance_vector(other.position)
+        direction = other.position - self.position
+        direction_normalized = direction.normalized
         distance = abs(direction)
         if distance <= self.radius + other.radius:
-            point_of_collision = self.position + (direction / 2)
-            self.position -= direction.normalized * (distance - (self.radius + other.radius))
+            point_of_collision = self.position + (direction_normalized * self.radius)
+            self.position = other.position - direction_normalized * (self.radius + other.radius)
             return point_of_collision
         else:
             return False
-
 
     def _set(self, field, other, *args, **kwargs):
         try:
@@ -146,4 +172,3 @@ class Body:
         value = Vector(x, y)
         setattr(self, field, value)
         return value
-
