@@ -30,6 +30,7 @@ for i in range(6):
 for handler in ship_1.event_handlers:
     window.push_handlers(handler)
 view = View(space=space, window=window, focus=ship_1, scale=.4)
+window.push_handlers(view)
 
 
 @window.event
@@ -37,6 +38,8 @@ def on_draw():
     window.clear()
     view.draw()
 
+event_logger = pyglet.window.event.WindowEventLogger()
+window.push_handlers(event_logger)
 
 if __name__ == "__main__":
     # Update the game 120 times per second

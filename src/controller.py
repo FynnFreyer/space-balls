@@ -5,12 +5,13 @@ from pyglet.window import key
 
 
 class Player(Body):
-    def __init__(self, speed=500, rot_speed=180, *args, **kwargs):
+    def __init__(self, speed=500, rot_speed=180, view=None, *args, **kwargs):
         super(Player, self).__init__(*args, **kwargs)
         self.speed = speed
         self.rot_speed = rot_speed
         self.key_pressed = key.KeyStateHandler()
         self.event_handlers = [self, self.key_pressed]
+        self.view = view
 
     def update(self, dt):
         direction = Vector(np.cos(self.rotation), np.sin(self.rotation))
@@ -25,6 +26,9 @@ class Player(Body):
         if self.key_pressed[key.RIGHT] and not self.key_pressed[key.LEFT]:
             self.rotation -= dr
         super().update(dt)
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        pass
 
 
 class Bullet(Body):

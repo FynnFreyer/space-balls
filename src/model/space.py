@@ -32,13 +32,14 @@ class Space:
             body_a.pulses.append(gravity * -1)
             body_b.pulses.append(gravity)
             if body_a.collides_with(body_b):
-                body_a.velocity, body_b.velocity = self._calculate_velocities(body_a, body_b)
+                body_a.velocity, body_b.velocity = self._calculate_collision(body_a, body_b)
 
-        for body in self.bodies:
-            body.checkbounds(*self.dimensions, strategy=body.wrap)
-            body.update(dt)
+            body_a.checkbounds(*self.dimensions, strategy=body_a.wrap)
+            body_a.update(dt)
+            body_b.checkbounds(*self.dimensions, strategy=body_b.wrap)
+            body_b.update(dt)
 
-    def _calculate_velocities(self, body_a: Body, body_b: Body):
+    def _calculate_collision(self, body_a: Body, body_b: Body, restitution=0.8):
         m1 = body_a.mass
         m2 = body_b.mass
 
@@ -51,7 +52,6 @@ class Space:
         v1_new = v1 - (p1 - p2) * ((2 * m2) / (m1 + m2)) * (((v1 - v2) * (p1 - p2)) / (p1 - p2).distance_squared())
         v2_new = v2 - (p2 - p1) * ((2 * m1) / (m1 + m2)) * (((v2 - v1) * (p2 - p1)) / (p2 - p1).distance_squared())
 
-        restitution = 0.95
         return v1_new * restitution, v2_new * restitution
 
     def _calculate_gravity(self, body_a: Body, body_b: Body):

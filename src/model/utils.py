@@ -29,12 +29,26 @@ class Vector(namedtuple('Vector', ['x', 'y'])):
         except TypeError:
             return Vector(self.x * other, self.y * other)
 
+    def __floordiv__(self, other):
+        try:
+            ox, oy = other
+            return Vector(self.x // ox, self.y // oy)
+        except TypeError:
+            return Vector(self.x // other, self.y // other)
+
     def __truediv__(self, other):
         try:
             ox, oy = other
             return Vector(self.x / ox, self.y / oy)
         except TypeError:
-            return Vector(self.x * other, self.y * other)
+            return Vector(self.x / other, self.y / other)
+
+    def __mod__(self, other):
+        try:
+            ox, oy = other
+            return Vector(self.x % ox, self.y % oy)
+        except TypeError:
+            return Vector(self.x % other, self.y % other)
 
     def __eq__(self, other):
         ox, oy = other
