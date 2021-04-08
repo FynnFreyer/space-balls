@@ -14,6 +14,7 @@ class Player(Body):
         self.view = view
 
     def update(self, dt):
+        # print(self.x, self.y)
         direction = Vector(np.cos(self.rotation), np.sin(self.rotation))
         dv = direction * self.speed
         dr = np.deg2rad(self.rot_speed * dt)

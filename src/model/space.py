@@ -27,17 +27,22 @@ class Space:
         self.bodies.extend(bodies)
 
     def update(self, dt):
-        for body_a, body_b in combinations(self.bodies, 2):
-            gravity = self._calculate_gravity(body_a, body_b)
-            body_a.pulses.append(gravity * -1)
-            body_b.pulses.append(gravity)
-            if body_a.collides_with(body_b):
-                body_a.velocity, body_b.velocity = self._calculate_collision(body_a, body_b)
+        if len(self.bodies) > 1:
+            for body_a, body_b in combinations(self.bodies, 2):
+                gravity = self._calculate_gravity(body_a, body_b)
+                body_a.pulses.append(gravity * -1)
+                body_b.pulses.append(gravity)
+                if body_a.collides_with(body_b):
+                    body_a.velocity, body_b.velocity = self._calculate_collision(body_a, body_b)
 
-            body_a.checkbounds(*self.dimensions, strategy=body_a.wrap)
-            body_a.update(dt)
-            body_b.checkbounds(*self.dimensions, strategy=body_b.wrap)
-            body_b.update(dt)
+                body_a.checkbounds(*self.dimensions)
+                body_a.update(dt)
+                body_b.checkbounds(*self.dimensions, strategy=body_a.wrap)
+                body_b.update(dt)
+        else:
+            for body in self.bodies:
+                body.checkbounds(*self.dimensions)
+                body.update(dt)
 
     def _calculate_collision(self, body_a: Body, body_b: Body, restitution=0.8):
         m1 = body_a.mass
